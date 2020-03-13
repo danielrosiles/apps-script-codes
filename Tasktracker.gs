@@ -1,5 +1,5 @@
-var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
-var currentSheet = spreadSheet.getActiveSheet();
+const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+const currentSheet = spreadSheet.getActiveSheet();
 
 function onEdit(e){
   var range = e.range;
@@ -14,7 +14,7 @@ function onEdit(e){
   var dropdown = currentSheet.getRange(row,1).getValue();  
   var currentTime = new Date().getTime();
   var lastTime = timerCell.getValue();
-  var msTime = 0;  
+  var msTime;
   
   if(column != 1){
     return;
@@ -43,12 +43,6 @@ function onEdit(e){
       break;
       
     case 'Finished':
-      var min = 0;
-      var sec = 0;
-      var hr = 0;
-      var minStr = "";
-      var hrStr = "";
-      
       if (lastTime > 1000000000000){
         msTime = currentTime - lastTime;
         timerCell.setValue(msTime);
@@ -56,14 +50,14 @@ function onEdit(e){
         msTime = timerCell.getValue();
       }
       
-      sec = Math.floor(msTime / 1000);
-      min = Math.floor(sec / 60);
-      hr = Math.floor(min / 60);
-      min = Math.floor(min % 60);
+      const getHour = (msTime) => {
+        let sec = Math.floor(msTime / 1000);
+        let min = Math.floor(sec / 60);
+        return { hr: Math.floor(min / 60), min: Math.floor(min % 60) }
+      }
+      let clock = getHour(msTime);
       
-      minStr = min > 9 ? String(min) : "0" + String(min);
-      hrStr = hr > 9 ? String(hr) : "0" + String(hr);
-      clockCell.setValue(hrStr + ":" + minStr);
+      clockCell.setValue(clock.hr + ':' + (clock.min > 9 ? clock.min : '0' + clock.min));
       finishedDateCell.setValue(new Date()).setNumberFormat('dd/MM/yyyy');
       break;
   }
